@@ -1,0 +1,22 @@
+COMPILE OPENCV WITH TBB, IPP AND INTEL COMPILER. [OPTIMIZATION]
+================================================
+1. source /opt/intel/bin/iccvars.sh intel64
+
+2. Change cmake/OpenCVFindIPP.cmake "set_ipp_variables()" [ENABLE IPP]
+	Old:
+		if(NOT EXISTS ${IPP_ROOT_DIR}/lib/intel64)
+		if(NOT EXISTS ${IPP_ROOT_DIR}/lib)
+	New:
+		set(IPP_LIBRARY_DIRS ${IPP_ROOT_DIR}/lib/intel64 PARENT_SCOPE)
+		set(IPP_LIBRARY_DIRS ${IPP_ROOT_DIR}/lib PARENT_SCOPE)
+
+3. export IPPROOT=/opt/intel/ipp [ENABLE IPP]
+
+4. More changes to Change cmake/OpenCVFindIPP.cmake [ENABLE Intel Compiler]
+	FROM: 	if(NOT EXISTS ${IPP_ROOT_DIR}/../em64t)
+	TO:		if(NOT EXISTS ${IPP_ROOT_DIR}/lib/intel64)
+
+	FROM: 	get_filename_component(INTEL_COMPILER_LIBRARY_DIR ${IPP_ROOT_DIR}/../lib REALPATH)
+	TO:		get_filename_component(INTEL_COMPILER_LIBRARY_DIR ${IPP_ROOT_DIR}/../compiler/lib REALPATH)
+
+5. cmake CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/home/ykiveish/workspace/tools/opencv-2.4.10-optimized-bin .. -DWITH_TBB=on -DTBB_INCLUDE_DIRS=/opt/intel/tbb/include -DTBB_LIB_DIR=/opt/intel/tbb/lib -DWITH_IPP=on -DCMAKE_CXX_COMPILER=/opt/intel/bin/icpc -DCMAKE_CXX_COMPILER=/opt/intel/bin/icc
